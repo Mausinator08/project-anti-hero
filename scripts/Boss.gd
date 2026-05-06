@@ -2,7 +2,6 @@ extends CharacterBody2D
 
 signal defeated
 
-# Load the Projectile scene so we can spawn copies of it at runtime
 const PROJECTILE_SCENE = preload("res://scenes/Projectile.tscn")
 
 const SPEED = 200.0
@@ -24,8 +23,8 @@ const PROJECTILE_COOLDOWN: float = 1.0
 var health: int = MAX_HEALTH
 var facing_direction: int = -1
 
-var is_attacking: bool = false   # true while Backhand Swipe is executing
-var is_slamming: bool = false    # true while Ground Slam is executing
+var is_attacking: bool = false
+var is_slamming: bool = false
 var slam_cooldown: float = 0.0
 var projectile_cooldown: float = 0.0
 
@@ -44,11 +43,9 @@ func _physics_process(delta: float) -> void:
 	if game_over:
 		return
 
-	# Apply gravity when airborne
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
-	# Read movement input
 	var direction := 0
 	if Input.is_action_pressed("move_left"):
 		direction = -1
@@ -61,21 +58,17 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction * SPEED
 	move_and_slide()
 
-	# Count down cooldowns every frame
 	if slam_cooldown > 0.0:
 		slam_cooldown -= delta
 	if projectile_cooldown > 0.0:
 		projectile_cooldown -= delta
 
-	# Light attack (J) — blocked while Slam is running
 	if Input.is_action_just_pressed("boss_light_attack") and not is_attacking and not is_slamming:
 		perform_swipe()
 
-	# Heavy attack (K) — blocked while Swipe is running, must be off cooldown
 	if Input.is_action_just_pressed("boss_heavy_attack") and not is_slamming and not is_attacking and slam_cooldown <= 0.0:
 		perform_slam()
 
-	# Ranged attack (L) — independent cooldown, fires any time it's ready
 	if Input.is_action_just_pressed("boss_projectile") and projectile_cooldown <= 0.0:
 		perform_projectile()
 
@@ -98,11 +91,10 @@ func perform_swipe() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
+	# Explicit target: Hero only
 	if not game_over:
 		for body in swipe_hitbox.get_overlapping_bodies():
-			if body == self:
-				continue
-			if body.has_method("take_damage"):
+			if body.name == "Hero" and body.has_method("take_damage"):
 				body.take_damage(SWIPE_DAMAGE)
 
 	await get_tree().create_timer(0.25).timeout
@@ -136,11 +128,10 @@ func perform_slam() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
+	# Explicit target: Hero only
 	if not game_over:
 		for body in slam_hitbox.get_overlapping_bodies():
-			if body == self:
-				continue
-			if body.has_method("take_damage"):
+			if body.name == "Hero" and body.has_method("take_damage"):
 				body.take_damage(SLAM_DAMAGE)
 
 	await get_tree().create_timer(SLAM_ACTIVE_TIME).timeout
@@ -153,23 +144,14 @@ func perform_slam() -> void:
 func perform_projectile() -> void:
 	projectile_cooldown = PROJECTILE_COOLDOWN
 
-	# Create a new copy of the Projectile scene
 	var proj = PROJECTILE_SCENE.instantiate()
 
-	# Spawn just outside the Boss's edge in the facing direction
-	# Boss visual is 80px wide (x: 0 to 80)
-	# Facing right: spawn at x=85 (5px gap from right edge)
-	# Facing left:  spawn at x=-35 (projectile is 30px wide, so 5px gap from left edge)
 	if facing_direction == 1:
 		proj.global_position = global_position + Vector2(85, 40)
 	else:
 		proj.global_position = global_position + Vector2(-35, 40)
 
-	# Tell the projectile which direction to travel
 	proj.setup(facing_direction)
-
-	# Add to Main scene (parent of Boss) so the projectile is independent of Boss
-	# If we added it as a child of Boss, it would move with Boss
 	get_parent().add_child(proj)
 
 	print("Boss fired Dark Projectile!")

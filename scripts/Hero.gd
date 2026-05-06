@@ -1,6 +1,5 @@
 extends CharacterBody2D
 
-# Emitted when health reaches 0 — GameManager listens for this
 signal defeated
 
 const GRAVITY = 980.0
@@ -18,8 +17,6 @@ var move_speed: int = 80
 var is_dead: bool = false
 var is_attacking: bool = false
 var attack_cooldown: float = 0.0
-
-# Set to true by GameManager when the game ends
 var game_over: bool = false
 
 @onready var boss = $"../Boss"
@@ -30,19 +27,15 @@ func _ready() -> void:
 	strike_hitbox.visible = false
 
 func _physics_process(delta: float) -> void:
-	# Freeze completely when game is over or dead
 	if is_dead or game_over:
 		return
 
-	# Apply gravity when airborne
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
-	# Count down attack cooldown
 	if attack_cooldown > 0.0:
 		attack_cooldown -= delta
 
-	# AI movement
 	var distance_to_boss: float = abs(boss.position.x - position.x)
 
 	if distance_to_boss > STOP_DISTANCE:
@@ -51,14 +44,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = 0
 
-	# AI attack
 	if distance_to_boss <= ATTACK_RANGE and attack_cooldown <= 0.0 and not is_attacking:
 		perform_strike()
 
 	move_and_slide()
 
 func set_game_over() -> void:
-	# Called by GameManager when either win or loss condition is met
 	game_over = true
 	velocity = Vector2.ZERO
 
@@ -78,12 +69,10 @@ func perform_strike() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Skip damage if game ended during the two-frame wait
+	# Explicit target: Boss only
 	if not game_over:
 		for body in strike_hitbox.get_overlapping_bodies():
-			if body == self:
-				continue  # Never damage yourself
-			if body.has_method("take_damage"):
+			if body.name == "Boss" and body.has_method("take_damage"):
 				body.take_damage(ATTACK_DAMAGE)
 
 	await get_tree().create_timer(0.2).timeout
@@ -93,7 +82,6 @@ func perform_strike() -> void:
 	is_attacking = false
 
 func take_damage(amount: int) -> void:
-	# Ignore damage if already dead or game is over
 	if is_dead or game_over:
 		return
 
@@ -118,4 +106,4 @@ func respawn(new_max_health: int, new_move_speed: int) -> void:
 	velocity = Vector2.ZERO
 	is_dead = false
 	attack_cooldown = 0.0
-	print("Hero respawned! Health: ", health, " / ", max_health)
+	print("Hero respawned! Health: ", health, " / ", max_health, " | Speed: ", move_speed)
