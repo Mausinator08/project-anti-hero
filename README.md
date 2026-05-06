@@ -8,6 +8,16 @@
 
 ---
 
+## Current Development Status
+
+**Current stable phase:** Phase 16 — Hero Lunge Attack  
+**Next planned step:** Lightweight development tooling/templates pass  
+**Prototype status:** The core combat loop is playable. Boss attacks, Hero attacks, Hero respawn/scaling, HUD, win/loss, restart, projectile combat, explicit targeting, adaptation milestone messages, and the Hero's first learned behavior are working.
+
+After Phase 16, the project will briefly pause new gameplay features to improve the development workflow with reusable prompts/templates and safer patch-based implementation steps.
+
+---
+
 ## Project Overview
 
 Project Anti-Hero is a 2D side-scrolling action prototype where the player controls the final boss seated in his throne room. A weak but determined Hero repeatedly enters the arena, dies, and returns stronger each time.
@@ -24,8 +34,9 @@ The prototype is inspired by the “boss perspective” concept seen in games li
 2. The Boss fights the Hero using powerful attacks.
 3. The Hero dies.
 4. The Hero returns stronger, faster, and more dangerous.
-5. The Boss must defeat the Hero repeatedly before the Hero finally brings him down.
-6. The game ends when:
+5. The Hero begins adapting with new behaviors.
+6. The Boss must defeat the Hero repeatedly before the Hero finally brings him down.
+7. The game ends when:
    - The Hero defeats the Boss, or
    - The Boss breaks the Hero’s will after enough defeats.
 
@@ -45,11 +56,13 @@ The prototype currently includes:
 - Hero auto-attack
 - Hero death and respawn loop
 - Hero scaling across attempts
+- Hero adaptation milestone messages
+- Hero lunge attack unlocked at Attempt 7
 - Boss health that persists across Hero attempts
 - HUD showing combat and scaling stats
 - Win/loss conditions
 - Restart after game over
-- Explicit targeting rules to prevent self-damage bugs
+- Explicit targeting rules to prevent self-damage and wrong-target bugs
 
 ---
 
@@ -70,12 +83,13 @@ This project is being built phase by phase.
 The current workflow is:
 
 1. Plan each phase.
-2. Use Claude to generate Godot/GDScript code.
-3. Review the plan before implementing.
-4. Implement in Godot 4.
-5. Test the phase.
-6. Commit to a dedicated Git branch.
-7. Merge into `main` only after the phase works.
+2. Use Claude to generate Godot/GDScript patch instructions from the current live files.
+3. Review the patch before implementation.
+4. Compile patch instructions into clean copy/paste-ready files when needed.
+5. Implement in Godot 4.
+6. Test the phase.
+7. Commit to a dedicated Git branch.
+8. Merge into `main` only after the phase works.
 
 The `main` branch is treated as the latest stable version.
 
@@ -86,10 +100,9 @@ The `main` branch is treated as the latest stable version.
 Each new phase uses its own branch, for example:
 
 ```text
-phase-12-boss-projectile
-phase-13-combat-rules-cleanup
 phase-14-hero-scaling-pass
 phase-15-hero-adaptation-milestones
+phase-16-hero-lunge-attack
 ```
 
 Once a phase works, it is committed, pushed, and merged into `main`.
@@ -319,22 +332,6 @@ This should feel understandable to someone opening the project for the first tim
 Complete through **Phase 40**.
 
 This should be playable, readable, testable, and exportable.
-
----
-
-## Current Development Status
-
-As of the current roadmap, the project has reached:
-
-```text
-Stable through Phase 14
-```
-
-Next planned phase:
-
-```text
-Phase 15 — Hero Adaptation Milestones
-```
 
 ---
 

@@ -28,6 +28,9 @@ size = Vector2(60, 100)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyhfs"]
 size = Vector2(60, 70)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tipki"]
+size = Vector2(80, 70)
+
 [node name="Main" type="Node2D" unique_id=1128687661]
 
 [node name="GameManager" type="Node" parent="." unique_id=1609458444]
@@ -140,6 +143,19 @@ shape = SubResource("RectangleShape2D_jyhfs")
 offset_right = 60.0
 offset_bottom = 70.0
 color = Color(0, 0.8627451, 1, 0.7058824)
+
+[node name="LungeHitbox" type="Area2D" parent="Hero" unique_id=263909927]
+visible = false
+monitoring = false
+
+[node name="LungeShape" type="CollisionShape2D" parent="Hero/LungeHitbox" unique_id=1234765592]
+position = Vector2(40, 35)
+shape = SubResource("RectangleShape2D_tipki")
+
+[node name="LungeVisual" type="ColorRect" parent="Hero/LungeHitbox" unique_id=287507147]
+offset_right = 80.0
+offset_bottom = 70.0
+color = Color(0, 1, 0.39215687, 0.7058824)
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=755435700]
 

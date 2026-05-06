@@ -75,6 +75,7 @@ func respawn_hero() -> void:
 	var new_attack_damage: int = get_hero_damage(displayed_attempt)
 	var new_cooldown: float    = get_hero_cooldown(displayed_attempt)
 
+	hero.lunge_unlocked = (displayed_attempt >= 7)
 	hero.respawn(new_max_health, new_move_speed, new_attack_damage, new_cooldown)
 
 	print(
