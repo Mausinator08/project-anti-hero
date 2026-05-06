@@ -4,15 +4,15 @@ signal defeated
 
 const GRAVITY = 980.0
 const SPAWN_POSITION = Vector2(172, 448)
-
-const ATTACK_DAMAGE: int = 10
-const ATTACK_COOLDOWN_DURATION: float = 1.5
 const ATTACK_RANGE: float = 70.0
 const STOP_DISTANCE: float = 65.0
 
+# These start at base values and are updated by GameManager on each respawn
 var max_health: int = 100
 var health: int = max_health
 var move_speed: int = 80
+var attack_damage: int = 10
+var attack_cooldown_duration: float = 1.5
 
 var is_dead: bool = false
 var is_attacking: bool = false
@@ -55,7 +55,7 @@ func set_game_over() -> void:
 
 func perform_strike() -> void:
 	is_attacking = true
-	attack_cooldown = ATTACK_COOLDOWN_DURATION
+	attack_cooldown = attack_cooldown_duration
 
 	var direction_to_boss: float = sign(boss.position.x - position.x)
 	if direction_to_boss >= 0:
@@ -69,11 +69,10 @@ func perform_strike() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Explicit target: Boss only
 	if not game_over:
 		for body in strike_hitbox.get_overlapping_bodies():
 			if body.name == "Boss" and body.has_method("take_damage"):
-				body.take_damage(ATTACK_DAMAGE)
+				body.take_damage(attack_damage)
 
 	await get_tree().create_timer(0.2).timeout
 
@@ -98,12 +97,19 @@ func die() -> void:
 	print("The Hero has been defeated!")
 	defeated.emit()
 
-func respawn(new_max_health: int, new_move_speed: int) -> void:
-	max_health = new_max_health
-	health = max_health
-	move_speed = new_move_speed
-	position = SPAWN_POSITION
-	velocity = Vector2.ZERO
-	is_dead = false
-	attack_cooldown = 0.0
-	print("Hero respawned! Health: ", health, " / ", max_health, " | Speed: ", move_speed)
+func respawn(new_max_health: int, new_move_speed: int, new_attack_damage: int, new_attack_cooldown: float) -> void:
+	max_health               = new_max_health
+	health                   = max_health
+	move_speed               = new_move_speed
+	attack_damage            = new_attack_damage
+	attack_cooldown_duration = new_attack_cooldown
+	position                 = SPAWN_POSITION
+	velocity                 = Vector2.ZERO
+	is_dead                  = false
+	attack_cooldown          = 0.0
+	print(
+		"Hero respawned! HP: ", health,
+		" | Speed: ", move_speed,
+		" | Damage: ", attack_damage,
+		" | Cooldown: ", "%.2f" % attack_cooldown_duration, "s"
+	)
