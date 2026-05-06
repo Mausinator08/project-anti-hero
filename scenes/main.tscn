@@ -64,7 +64,7 @@ offset_bottom = 648.0
 color = Color(0.3137255, 0.3137255, 0.3137255, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Arena/RightWall" unique_id=920596130]
-position = Vector2(25, 324)
+position = Vector2(21, 324)
 shape = SubResource("RectangleShape2D_tefeu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1893312184]
@@ -153,3 +153,22 @@ offset_top = 125.0
 offset_right = 320.0
 offset_bottom = 155.0
 theme_override_font_sizes/font_size = 18
+
+[node name="ResultLabel" type="Label" parent="HUD" unique_id=1243673276]
+visible = false
+offset_left = 176.0
+offset_top = 250.0
+offset_right = 976.0
+offset_bottom = 330.0
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="RestartLabel" type="Label" parent="HUD" unique_id=2043845782]
+visible = false
+offset_left = 276.0
+offset_top = 350.0
+offset_right = 876.0
+offset_bottom = 390.0
+theme_override_font_sizes/font_size = 22
+text = "Press R to restart"
+horizontal_alignment = 1
