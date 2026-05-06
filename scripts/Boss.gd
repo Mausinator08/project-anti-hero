@@ -1,7 +1,9 @@
 extends CharacterBody2D
 
-# Emitted when Boss HP reaches 0 — GameManager listens for this
 signal defeated
+
+# Load the Projectile scene so we can spawn copies of it at runtime
+const PROJECTILE_SCENE = preload("res://scenes/Projectile.tscn")
 
 const SPEED = 200.0
 const GRAVITY = 980.0
@@ -12,16 +14,20 @@ const SWIPE_DAMAGE: int = 25
 
 # --- Heavy attack: Ground Slam ---
 const SLAM_DAMAGE: int = 50
-const SLAM_COOLDOWN: float = 2.0   # seconds before Slam can be used again
-const SLAM_WINDUP: float = 0.35    # warning visible before damage activates
-const SLAM_ACTIVE_TIME: float = 0.3 # how long hitbox stays active after windup
+const SLAM_COOLDOWN: float = 2.0
+const SLAM_WINDUP: float = 0.35
+const SLAM_ACTIVE_TIME: float = 0.3
+
+# --- Ranged attack: Dark Projectile ---
+const PROJECTILE_COOLDOWN: float = 1.0
 
 var health: int = MAX_HEALTH
 var facing_direction: int = -1
 
-var is_attacking: bool = false  # true while Backhand Swipe is executing
-var is_slamming: bool = false   # true while Ground Slam is executing
-var slam_cooldown: float = 0.0  # counts down between Slam uses
+var is_attacking: bool = false   # true while Backhand Swipe is executing
+var is_slamming: bool = false    # true while Ground Slam is executing
+var slam_cooldown: float = 0.0
+var projectile_cooldown: float = 0.0
 
 var game_over: bool = false
 
@@ -29,7 +35,6 @@ var game_over: bool = false
 @onready var slam_hitbox: Area2D  = $SlamHitbox
 
 func _ready() -> void:
-	# Both hitboxes start hidden and inactive
 	swipe_hitbox.monitoring = false
 	swipe_hitbox.visible = false
 	slam_hitbox.monitoring = false
@@ -56,23 +61,29 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction * SPEED
 	move_and_slide()
 
-	# Count down Slam cooldown every frame
+	# Count down cooldowns every frame
 	if slam_cooldown > 0.0:
 		slam_cooldown -= delta
+	if projectile_cooldown > 0.0:
+		projectile_cooldown -= delta
 
-	# Light attack — blocked while Slam is running
+	# Light attack (J) — blocked while Slam is running
 	if Input.is_action_just_pressed("boss_light_attack") and not is_attacking and not is_slamming:
 		perform_swipe()
 
-	# Heavy attack — blocked while Swipe is running, and while on cooldown
+	# Heavy attack (K) — blocked while Swipe is running, must be off cooldown
 	if Input.is_action_just_pressed("boss_heavy_attack") and not is_slamming and not is_attacking and slam_cooldown <= 0.0:
 		perform_slam()
+
+	# Ranged attack (L) — independent cooldown, fires any time it's ready
+	if Input.is_action_just_pressed("boss_projectile") and projectile_cooldown <= 0.0:
+		perform_projectile()
 
 func set_game_over() -> void:
 	game_over = true
 	velocity = Vector2.ZERO
 
-# --- Backhand Swipe (unchanged from Phase 10) ---
+# --- Backhand Swipe ---
 func perform_swipe() -> void:
 	is_attacking = true
 
@@ -90,7 +101,7 @@ func perform_swipe() -> void:
 	if not game_over:
 		for body in swipe_hitbox.get_overlapping_bodies():
 			if body == self:
-				continue  # Never damage yourself
+				continue
 			if body.has_method("take_damage"):
 				body.take_damage(SWIPE_DAMAGE)
 
@@ -100,34 +111,26 @@ func perform_swipe() -> void:
 	swipe_hitbox.visible = false
 	is_attacking = false
 
-# --- Ground Slam (new) ---
+# --- Ground Slam ---
 func perform_slam() -> void:
 	is_slamming = true
 	slam_cooldown = SLAM_COOLDOWN
 
-	# Position the slam hitbox in front of Boss
-	# Hitbox is 130px wide — Boss visual ends at x=80 facing right, starts at x=0 facing left
 	if facing_direction == 1:
-		slam_hitbox.position = Vector2(80, 5)     # right of Boss
+		slam_hitbox.position = Vector2(80, 5)
 	else:
-		slam_hitbox.position = Vector2(-130, 5)   # left of Boss
+		slam_hitbox.position = Vector2(-130, 5)
 
-	# --- Windup phase ---
-	# Show the hitbox as a visible WARNING — monitoring is still OFF
-	# The player sees the purple box and has 0.35s to react
 	slam_hitbox.visible = true
 	slam_hitbox.monitoring = false
 
 	await get_tree().create_timer(SLAM_WINDUP).timeout
 
-	# If game ended during windup, clean up and stop
 	if game_over:
 		slam_hitbox.visible = false
 		is_slamming = false
 		return
 
-	# --- Damage phase ---
-	# Now turn on monitoring — hitbox is hot
 	slam_hitbox.monitoring = true
 
 	await get_tree().process_frame
@@ -136,16 +139,40 @@ func perform_slam() -> void:
 	if not game_over:
 		for body in slam_hitbox.get_overlapping_bodies():
 			if body == self:
-				continue  # Never damage yourself
+				continue
 			if body.has_method("take_damage"):
 				body.take_damage(SLAM_DAMAGE)
 
-	# Keep hitbox active and visible briefly for feedback
 	await get_tree().create_timer(SLAM_ACTIVE_TIME).timeout
 
 	slam_hitbox.monitoring = false
 	slam_hitbox.visible = false
 	is_slamming = false
+
+# --- Dark Projectile ---
+func perform_projectile() -> void:
+	projectile_cooldown = PROJECTILE_COOLDOWN
+
+	# Create a new copy of the Projectile scene
+	var proj = PROJECTILE_SCENE.instantiate()
+
+	# Spawn just outside the Boss's edge in the facing direction
+	# Boss visual is 80px wide (x: 0 to 80)
+	# Facing right: spawn at x=85 (5px gap from right edge)
+	# Facing left:  spawn at x=-35 (projectile is 30px wide, so 5px gap from left edge)
+	if facing_direction == 1:
+		proj.global_position = global_position + Vector2(85, 40)
+	else:
+		proj.global_position = global_position + Vector2(-35, 40)
+
+	# Tell the projectile which direction to travel
+	proj.setup(facing_direction)
+
+	# Add to Main scene (parent of Boss) so the projectile is independent of Boss
+	# If we added it as a child of Boss, it would move with Boss
+	get_parent().add_child(proj)
+
+	print("Boss fired Dark Projectile!")
 
 func take_damage(amount: int) -> void:
 	if health <= 0:
