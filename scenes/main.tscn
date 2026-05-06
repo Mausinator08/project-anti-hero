@@ -1,3 +1,41 @@
 [gd_scene format=3 uid="uid://bnd2lionocv2l"]
 
 [node name="Main" type="Node2D" unique_id=1128687661]
+
+[node name="GameManager" type="Node" parent="." unique_id=1609458444]
+
+[node name="Arena" type="Node2D" parent="." unique_id=565076484]
+
+[node name="Floor" type="ColorRect" parent="Arena" unique_id=1389195892]
+offset_top = 548.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.5882353, 0.5882353, 0.5882353, 1)
+
+[node name="LeftWall" type="ColorRect" parent="Arena" unique_id=1184342586]
+offset_right = 50.0
+offset_bottom = 648.0
+color = Color(0.3137255, 0.3137255, 0.3137255, 1)
+
+[node name="RightWall" type="ColorRect" parent="Arena" unique_id=1702875769]
+offset_left = 1102.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.3137255, 0.3137255, 0.3137255, 1)
+
+[node name="Boss" type="ColorRect" parent="." unique_id=1018957167]
+offset_left = 900.0
+offset_top = 448.0
+offset_right = 980.0
+offset_bottom = 548.0
+color = Color(0.8627451, 0.19607843, 0.19607843, 1)
+
+[node name="Hero" type="ColorRect" parent="." unique_id=1178701282]
+offset_left = 172.0
+offset_top = 448.0
+offset_right = 232.0
+offset_bottom = 548.0
+color = Color(0.19607843, 0.39215687, 0.8627451, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1893312184]
+offset = Vector2(576, 324)
