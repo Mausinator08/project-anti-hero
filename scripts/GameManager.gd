@@ -14,6 +14,7 @@ var game_over: bool = false
 @onready var hero_speed_label: Label    = $"../HUD/HeroSpeedLabel"
 @onready var hero_damage_label: Label   = $"../HUD/HeroDamageLabel"
 @onready var hero_cooldown_label: Label = $"../HUD/HeroCooldownLabel"
+@onready var adaptation_label: Label    = $"../HUD/AdaptationLabel"
 @onready var result_label: Label        = $"../HUD/ResultLabel"
 @onready var restart_label: Label       = $"../HUD/RestartLabel"
 
@@ -55,6 +56,8 @@ func trigger_game_over(message: String) -> void:
 	print("GAME OVER: ", message)
 	hero.set_game_over()
 	boss.set_game_over()
+	# Hide adaptation message immediately if game ends mid-display
+	adaptation_label.visible = false
 	result_label.text = message
 	result_label.visible = true
 	restart_label.visible = true
@@ -65,9 +68,6 @@ func respawn_hero() -> void:
 	if game_over:
 		return
 
-	# Use the DISPLAYED attempt number (what the HUD shows) so the scaling
-	# functions read like the design table: "Attempt 4 starts tier 2."
-	# attempt_count is 0-based internally; adding 1 gives the displayed number.
 	var displayed_attempt: int = attempt_count + 1
 
 	var new_max_health: int    = get_hero_health(displayed_attempt)
@@ -85,42 +85,66 @@ func respawn_hero() -> void:
 		" | Cooldown: ", "%.2f" % new_cooldown, "s"
 	)
 
+	# Show adaptation message at milestone attempts only
+	# Called without 'await' so it runs in the background — gameplay continues normally
+	var message: String = get_adaptation_message(displayed_attempt)
+	if message != "":
+		show_adaptation_message(message)
+
+func get_adaptation_message(attempt: int) -> String:
+	# Returns a message string for milestone attempts, empty string for all others
+	match attempt:
+		4:  return "The Hero steadies his stance."
+		7:  return "The Hero studies your rhythm."
+		10: return "The Hero grows bolder."
+		13: return "The Hero refuses to break."
+		_:  return ""  # Non-milestone attempt — no message
+
+func show_adaptation_message(message: String) -> void:
+	# Guard: don't show if game is already over
+	if game_over:
+		return
+
+	adaptation_label.text = message
+	adaptation_label.visible = true
+	print("Adaptation message: ", message)
+
+	# Wait 3 seconds, then hide
+	await get_tree().create_timer(3.0).timeout
+
+	# Always hide after the timer, even if game ended while waiting
+	adaptation_label.visible = false
+
 # ---------------------------------------------------------------------------
-# Scaling functions
-# The 'attempt' parameter is always the DISPLAYED attempt number (1, 2, 3...)
-# matching exactly what the HUD shows. This makes the tiers easy to read.
+# Scaling functions — 'attempt' is the displayed attempt number (1-based)
 # ---------------------------------------------------------------------------
 
 func get_hero_health(attempt: int) -> int:
-	# Attempt 1 = 100, Attempt 2 = 110, Attempt 3 = 120, no cap
 	return 100 + (attempt - 1) * 10
 
 func get_hero_speed(attempt: int) -> int:
-	# Attempt 1 = 80, Attempt 2 = 85 ... capped at 140
 	return min(80 + (attempt - 1) * 5, 140)
 
 func get_hero_damage(attempt: int) -> int:
-	# Increases at milestone attempts — not every single attempt
-	if attempt < 4:    # Attempts 1, 2, 3
+	if attempt < 4:
 		return 10
-	elif attempt < 7:  # Attempts 4, 5, 6
+	elif attempt < 7:
 		return 12
-	elif attempt < 10: # Attempts 7, 8, 9
+	elif attempt < 10:
 		return 15
-	elif attempt < 13: # Attempts 10, 11, 12
+	elif attempt < 13:
 		return 18
-	else:              # Attempts 13 and beyond
+	else:
 		return 22
 
 func get_hero_cooldown(attempt: int) -> float:
-	# Shrinks at the same milestones as damage — Hero attacks faster each tier
-	if attempt < 4:    # Attempts 1, 2, 3
+	if attempt < 4:
 		return 1.5
-	elif attempt < 7:  # Attempts 4, 5, 6
+	elif attempt < 7:
 		return 1.35
-	elif attempt < 10: # Attempts 7, 8, 9
+	elif attempt < 10:
 		return 1.2
-	elif attempt < 13: # Attempts 10, 11, 12
+	elif attempt < 13:
 		return 1.05
-	else:              # Attempts 13 and beyond
+	else:
 		return 0.9
