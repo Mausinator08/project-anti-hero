@@ -28,13 +28,25 @@ var projectile_cooldown: float = 0.0
 var game_over: bool = false
 
 @onready var swipe_hitbox: Area2D = $SwipeHitbox
-@onready var slam_hitbox: Area2D  = $SlamHitbox
+@onready var slam_hitbox: Area2D = $SlamHitbox
 
 func _ready() -> void:
 	swipe_hitbox.monitoring = false
 	swipe_hitbox.visible = false
 	slam_hitbox.monitoring = false
 	slam_hitbox.visible = false
+	swipe_hitbox.body_entered.connect(_swipe_collides)
+	slam_hitbox.body_entered.connect(_slam_collides)
+
+func _swipe_collides(body: Node2D) -> void:
+	if not game_over:
+		if body.name == "Hero" and body.has_method("take_damage"):
+			body.take_damage(SWIPE_DAMAGE)
+
+func _slam_collides(body: Node2D) -> void:
+	if not game_over:
+		if body.name == "Hero" and body.has_method("take_damage"):
+			body.take_damage(SLAM_DAMAGE)
 
 func _physics_process(delta: float) -> void:
 	if game_over:
@@ -90,11 +102,6 @@ func perform_swipe() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	if not game_over:
-		for body in swipe_hitbox.get_overlapping_bodies():
-			if body.name == "Hero" and body.has_method("take_damage"):
-				body.take_damage(SWIPE_DAMAGE)
-
 	await get_tree().create_timer(0.25).timeout
 
 	swipe_hitbox.monitoring = false
@@ -124,11 +131,6 @@ func perform_slam() -> void:
 
 	await get_tree().process_frame
 	await get_tree().process_frame
-
-	if not game_over:
-		for body in slam_hitbox.get_overlapping_bodies():
-			if body.name == "Hero" and body.has_method("take_damage"):
-				body.take_damage(SLAM_DAMAGE)
 
 	await get_tree().create_timer(SLAM_ACTIVE_TIME).timeout
 
