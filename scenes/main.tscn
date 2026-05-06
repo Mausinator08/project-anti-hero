@@ -1,16 +1,18 @@
 [gd_scene format=3 uid="uid://bnd2lionocv2l"]
 
+[ext_resource type="Script" uid="uid://bt6flu3ddywmt" path="res://scripts/Boss.gd" id="1_o5qli"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sgp6g"]
+size = Vector2(1152, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
+size = Vector2(80, 100)
+
 [node name="Main" type="Node2D" unique_id=1128687661]
 
 [node name="GameManager" type="Node" parent="." unique_id=1609458444]
 
 [node name="Arena" type="Node2D" parent="." unique_id=565076484]
-
-[node name="Floor" type="ColorRect" parent="Arena" unique_id=1389195892]
-offset_top = 548.0
-offset_right = 1152.0
-offset_bottom = 648.0
-color = Color(0.5882353, 0.5882353, 0.5882353, 1)
 
 [node name="LeftWall" type="ColorRect" parent="Arena" unique_id=1184342586]
 offset_right = 50.0
@@ -23,12 +25,17 @@ offset_right = 1152.0
 offset_bottom = 648.0
 color = Color(0.3137255, 0.3137255, 0.3137255, 1)
 
-[node name="Boss" type="ColorRect" parent="." unique_id=1018957167]
-offset_left = 900.0
-offset_top = 448.0
-offset_right = 980.0
-offset_bottom = 548.0
-color = Color(0.8627451, 0.19607843, 0.19607843, 1)
+[node name="Floor" type="StaticBody2D" parent="Arena" unique_id=418825028]
+position = Vector2(0, 548)
+
+[node name="FloorColor" type="ColorRect" parent="Arena/Floor" unique_id=413519774]
+offset_right = 1152.0
+offset_bottom = 100.0
+color = Color(0.5882353, 0.5882353, 0.5882353, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arena/Floor" unique_id=91959633]
+position = Vector2(576, 50)
+shape = SubResource("RectangleShape2D_sgp6g")
 
 [node name="Hero" type="ColorRect" parent="." unique_id=1178701282]
 offset_left = 172.0
@@ -39,3 +46,16 @@ color = Color(0.19607843, 0.39215687, 0.8627451, 1)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1893312184]
 offset = Vector2(576, 324)
+
+[node name="Boss" type="CharacterBody2D" parent="." unique_id=795367126]
+position = Vector2(900, 448)
+script = ExtResource("1_o5qli")
+
+[node name="BossColor" type="ColorRect" parent="Boss" unique_id=2000990394]
+offset_right = 80.0
+offset_bottom = 100.0
+color = Color(0.8627451, 0.19607843, 0.19607843, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss" unique_id=1486249558]
+position = Vector2(40, 50)
+shape = SubResource("RectangleShape2D_o5qli")
