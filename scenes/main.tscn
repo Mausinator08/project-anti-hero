@@ -19,6 +19,9 @@ size = Vector2(80, 100)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sugp2"]
 size = Vector2(70, 80)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o6xl0"]
+size = Vector2(130, 90)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(60, 100)
 
@@ -96,6 +99,20 @@ shape = SubResource("RectangleShape2D_sugp2")
 offset_right = 70.0
 offset_bottom = 80.0
 color = Color(1, 0.78431374, 0, 0.7058824)
+
+[node name="SlamHitbox" type="Area2D" parent="Boss" unique_id=1918494638]
+visible = false
+position = Vector2(80, 5)
+monitoring = false
+
+[node name="SlamShape" type="CollisionShape2D" parent="Boss/SlamHitbox" unique_id=431056211]
+position = Vector2(65, 45)
+shape = SubResource("RectangleShape2D_o6xl0")
+
+[node name="SlamVisual" type="ColorRect" parent="Boss/SlamHitbox" unique_id=1210008245]
+offset_right = 130.0
+offset_bottom = 90.0
+color = Color(0.7058824, 0, 0.78431374, 0.627451)
 
 [node name="Hero" type="CharacterBody2D" parent="." unique_id=815339252]
 position = Vector2(172, 448)
