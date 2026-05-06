@@ -8,16 +8,13 @@ const SPEED = 200.0
 const GRAVITY = 980.0
 const MAX_HEALTH: int = 300
 
-# --- Light attack: Backhand Swipe ---
 const SWIPE_DAMAGE: int = 25
 
-# --- Heavy attack: Ground Slam ---
 const SLAM_DAMAGE: int = 50
 const SLAM_COOLDOWN: float = 2.0
 const SLAM_WINDUP: float = 0.35
 const SLAM_ACTIVE_TIME: float = 0.3
 
-# --- Ranged attack: Dark Projectile ---
 const PROJECTILE_COOLDOWN: float = 1.0
 
 var health: int = MAX_HEALTH
@@ -63,20 +60,22 @@ func _physics_process(delta: float) -> void:
 	if projectile_cooldown > 0.0:
 		projectile_cooldown -= delta
 
+	# Light attack — blocked while Slam is running
 	if Input.is_action_just_pressed("boss_light_attack") and not is_attacking and not is_slamming:
 		perform_swipe()
 
+	# Heavy attack — blocked while Swipe is running, must be off cooldown
 	if Input.is_action_just_pressed("boss_heavy_attack") and not is_slamming and not is_attacking and slam_cooldown <= 0.0:
 		perform_slam()
 
-	if Input.is_action_just_pressed("boss_projectile") and projectile_cooldown <= 0.0:
+	# Ranged attack — blocked while Swipe or Slam is running, must be off cooldown
+	if Input.is_action_just_pressed("boss_projectile") and projectile_cooldown <= 0.0 and not is_attacking and not is_slamming:
 		perform_projectile()
 
 func set_game_over() -> void:
 	game_over = true
 	velocity = Vector2.ZERO
 
-# --- Backhand Swipe ---
 func perform_swipe() -> void:
 	is_attacking = true
 
@@ -91,7 +90,6 @@ func perform_swipe() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Explicit target: Hero only
 	if not game_over:
 		for body in swipe_hitbox.get_overlapping_bodies():
 			if body.name == "Hero" and body.has_method("take_damage"):
@@ -103,7 +101,6 @@ func perform_swipe() -> void:
 	swipe_hitbox.visible = false
 	is_attacking = false
 
-# --- Ground Slam ---
 func perform_slam() -> void:
 	is_slamming = true
 	slam_cooldown = SLAM_COOLDOWN
@@ -128,7 +125,6 @@ func perform_slam() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Explicit target: Hero only
 	if not game_over:
 		for body in slam_hitbox.get_overlapping_bodies():
 			if body.name == "Hero" and body.has_method("take_damage"):
@@ -140,7 +136,6 @@ func perform_slam() -> void:
 	slam_hitbox.visible = false
 	is_slamming = false
 
-# --- Dark Projectile ---
 func perform_projectile() -> void:
 	projectile_cooldown = PROJECTILE_COOLDOWN
 
