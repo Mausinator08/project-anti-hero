@@ -189,3 +189,17 @@ offset_bottom = 390.0
 theme_override_font_sizes/font_size = 22
 text = "Press R to restart"
 horizontal_alignment = 1
+
+[node name="HeroDamageLabel" type="Label" parent="HUD" unique_id=268030759]
+offset_left = 20.0
+offset_top = 160.0
+offset_right = 320.0
+offset_bottom = 190.0
+theme_override_font_sizes/font_size = 18
+
+[node name="HeroCooldownLabel" type="Label" parent="HUD" unique_id=412560169]
+offset_left = 20.0
+offset_top = 195.0
+offset_right = 340.0
+offset_bottom = 225.0
+theme_override_font_sizes/font_size = 18
