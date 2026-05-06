@@ -9,6 +9,9 @@ size = Vector2(1152, 100)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
 size = Vector2(80, 100)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sugp2"]
+size = Vector2(70, 80)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(60, 100)
 
@@ -56,6 +59,20 @@ color = Color(0.8627451, 0.19607843, 0.19607843, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boss" unique_id=1486249558]
 position = Vector2(40, 50)
 shape = SubResource("RectangleShape2D_o5qli")
+
+[node name="SwipeHitbox" type="Area2D" parent="Boss" unique_id=439252130]
+visible = false
+position = Vector2(80, 10)
+monitoring = false
+
+[node name="SwipeShape" type="CollisionShape2D" parent="Boss/SwipeHitbox" unique_id=1695986292]
+position = Vector2(35, 40)
+shape = SubResource("RectangleShape2D_sugp2")
+
+[node name="SwipeVisual" type="ColorRect" parent="Boss/SwipeHitbox" unique_id=1310015407]
+offset_right = 70.0
+offset_bottom = 80.0
+color = Color(1, 0.78431374, 0, 0.7058824)
 
 [node name="Hero" type="CharacterBody2D" parent="." unique_id=815339252]
 position = Vector2(172, 448)
