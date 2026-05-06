@@ -16,6 +16,9 @@ size = Vector2(70, 80)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(60, 100)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jyhfs"]
+size = Vector2(60, 70)
+
 [node name="Main" type="Node2D" unique_id=1128687661]
 
 [node name="GameManager" type="Node" parent="." unique_id=1609458444]
@@ -88,3 +91,17 @@ color = Color(0.19607843, 0.039215688, 0.8627451, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hero" unique_id=731190279]
 position = Vector2(30, 50)
 shape = SubResource("RectangleShape2D_0wfyh")
+
+[node name="StrikeHitbox" type="Area2D" parent="Hero" unique_id=1593808443]
+visible = false
+position = Vector2(60, 5)
+monitoring = false
+
+[node name="StrikeShape" type="CollisionShape2D" parent="Hero/StrikeHitbox" unique_id=95563946]
+position = Vector2(30, 35)
+shape = SubResource("RectangleShape2D_jyhfs")
+
+[node name="StrikeVisual" type="ColorRect" parent="Hero/StrikeHitbox" unique_id=214178319]
+offset_right = 60.0
+offset_bottom = 70.0
+color = Color(0, 0.8627451, 1, 0.7058824)
