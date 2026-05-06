@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bnd2lionocv2l"]
 
 [ext_resource type="Script" uid="uid://bt6flu3ddywmt" path="res://scripts/Boss.gd" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://dg623n158wwgb" path="res://scripts/GameManager.gd" id="1_sugp2"]
 [ext_resource type="Script" uid="uid://dsnoap8b886dc" path="res://scripts/Hero.gd" id="2_0wfyh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sgp6g"]
@@ -18,6 +19,7 @@ size = Vector2(60, 100)
 [node name="Main" type="Node2D" unique_id=1128687661]
 
 [node name="GameManager" type="Node" parent="." unique_id=1609458444]
+script = ExtResource("1_sugp2")
 
 [node name="Arena" type="Node2D" parent="." unique_id=565076484]
 
