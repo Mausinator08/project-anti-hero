@@ -4,8 +4,8 @@ const SPEED = 200.0
 const GRAVITY = 980.0
 const MAX_HEALTH: int = 300
 
-# Boss health persists across Hero attempts — this is intentional
-# The Hero chips away at the Boss over multiple runs
+# Boss health persists across Hero attempts intentionally —
+# the Hero chips away at the Boss over multiple runs
 var health: int = MAX_HEALTH
 
 var facing_direction: int = -1
@@ -55,6 +55,8 @@ func perform_swipe() -> void:
 	await get_tree().process_frame
 
 	for body in swipe_hitbox.get_overlapping_bodies():
+		if body == self:
+			continue  # Never damage yourself — skip Boss's own body
 		if body.has_method("take_damage"):
 			body.take_damage(25)
 

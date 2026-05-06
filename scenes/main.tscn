@@ -7,6 +7,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sgp6g"]
 size = Vector2(1152, 100)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tbgi4"]
+size = Vector2(50, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tefeu"]
+size = Vector2(50, 648)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
 size = Vector2(80, 100)
 
@@ -26,17 +32,6 @@ script = ExtResource("1_sugp2")
 
 [node name="Arena" type="Node2D" parent="." unique_id=565076484]
 
-[node name="LeftWall" type="ColorRect" parent="Arena" unique_id=1184342586]
-offset_right = 50.0
-offset_bottom = 648.0
-color = Color(0.3137255, 0.3137255, 0.3137255, 1)
-
-[node name="RightWall" type="ColorRect" parent="Arena" unique_id=1702875769]
-offset_left = 1102.0
-offset_right = 1152.0
-offset_bottom = 648.0
-color = Color(0.3137255, 0.3137255, 0.3137255, 1)
-
 [node name="Floor" type="StaticBody2D" parent="Arena" unique_id=418825028]
 position = Vector2(0, 548)
 
@@ -48,6 +43,29 @@ color = Color(0.5882353, 0.5882353, 0.5882353, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Arena/Floor" unique_id=91959633]
 position = Vector2(576, 50)
 shape = SubResource("RectangleShape2D_sgp6g")
+
+[node name="LeftWall" type="StaticBody2D" parent="Arena" unique_id=2125225119]
+
+[node name="LeftWallColor" type="ColorRect" parent="Arena/LeftWall" unique_id=1568112368]
+offset_right = 50.0
+offset_bottom = 648.0
+color = Color(0.3137255, 0.3137255, 0.3137255, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arena/LeftWall" unique_id=1045372966]
+position = Vector2(25, 324)
+shape = SubResource("RectangleShape2D_tbgi4")
+
+[node name="RightWall" type="StaticBody2D" parent="Arena" unique_id=1838066965]
+position = Vector2(1102, 0)
+
+[node name="RightWallColor" type="ColorRect" parent="Arena/RightWall" unique_id=1538389545]
+offset_right = 50.0
+offset_bottom = 648.0
+color = Color(0.3137255, 0.3137255, 0.3137255, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arena/RightWall" unique_id=920596130]
+position = Vector2(25, 324)
+shape = SubResource("RectangleShape2D_tefeu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1893312184]
 offset = Vector2(576, 324)
