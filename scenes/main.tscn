@@ -105,3 +105,33 @@ shape = SubResource("RectangleShape2D_jyhfs")
 offset_right = 60.0
 offset_bottom = 70.0
 color = Color(0, 0.8627451, 1, 0.7058824)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=755435700]
+
+[node name="BossHPLabel" type="Label" parent="HUD" unique_id=1819115607]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 320.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 18
+
+[node name="HeroHPLabel" type="Label" parent="HUD" unique_id=1330288796]
+offset_left = 20.0
+offset_top = 55.0
+offset_right = 320.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 18
+
+[node name="AttemptLabel" type="Label" parent="HUD" unique_id=87660320]
+offset_left = 20.0
+offset_top = 90.0
+offset_right = 320.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 18
+
+[node name="HeroSpeedLabel" type="Label" parent="HUD" unique_id=1190931110]
+offset_left = 20.0
+offset_top = 125.0
+offset_right = 320.0
+offset_bottom = 155.0
+theme_override_font_sizes/font_size = 18

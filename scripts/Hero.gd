@@ -25,13 +25,11 @@ var is_attacking: bool = false
 var attack_cooldown: float = 0.0
 
 # --- Node references ---
-# $"../Boss"  = go up to Main, then find the Boss node
-# $StrikeHitbox = direct child of this Hero node
 @onready var boss = $"../Boss"
 @onready var strike_hitbox: Area2D = $StrikeHitbox
 
 func _ready() -> void:
-	# Hitbox starts hidden and inactive — only turns on during an attack
+	# Hitbox starts hidden and inactive
 	strike_hitbox.monitoring = false
 	strike_hitbox.visible = false
 
@@ -52,15 +50,12 @@ func _physics_process(delta: float) -> void:
 	var distance_to_boss: float = abs(boss.position.x - position.x)
 
 	if distance_to_boss > STOP_DISTANCE:
-		# Walk toward Boss
 		var direction: float = sign(boss.position.x - position.x)
 		velocity.x = direction * move_speed
 	else:
-		# In position — stop walking
 		velocity.x = 0
 
 	# --- AI Attack ---
-	# Trigger a strike when: close enough, cooldown expired, not mid-swing
 	if distance_to_boss <= ATTACK_RANGE and attack_cooldown <= 0.0 and not is_attacking:
 		perform_strike()
 
@@ -71,29 +66,24 @@ func perform_strike() -> void:
 	attack_cooldown = ATTACK_COOLDOWN_DURATION
 
 	# Place the hitbox on whichever side the Boss is on
-	# Hero visual is 60px wide starting at x=0
-	# Facing right: hitbox starts at right edge (x=60)
-	# Facing left:  hitbox ends at left edge (x=0), starts at x=-60
 	var direction_to_boss: float = sign(boss.position.x - position.x)
 	if direction_to_boss >= 0:
 		strike_hitbox.position = Vector2(60, 5)
 	else:
 		strike_hitbox.position = Vector2(-60, 5)
 
-	# Activate and show the hitbox
 	strike_hitbox.monitoring = true
 	strike_hitbox.visible = true
 
-	# Wait two physics frames so the engine registers who is inside
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Deal damage to anything inside the hitbox that has take_damage()
 	for body in strike_hitbox.get_overlapping_bodies():
+		if body == self:
+			continue  # Never damage yourself — skip Hero's own body
 		if body.has_method("take_damage"):
 			body.take_damage(ATTACK_DAMAGE)
 
-	# Keep hitbox visible briefly, then hide it
 	await get_tree().create_timer(0.2).timeout
 
 	strike_hitbox.monitoring = false
@@ -124,5 +114,5 @@ func respawn(new_max_health: int, new_move_speed: int) -> void:
 	position = SPAWN_POSITION
 	velocity = Vector2.ZERO
 	is_dead = false
-	attack_cooldown = 0.0  # Reset so Hero can attack immediately after respawn
+	attack_cooldown = 0.0
 	print("Hero respawned! Health: ", health, " / ", max_health, " | Speed: ", move_speed)
