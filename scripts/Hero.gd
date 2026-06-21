@@ -2,24 +2,24 @@ extends CharacterBody2D
 
 signal defeated
 
-const GRAVITY = 980.0
-const SPAWN_POSITION = Vector2(172, 448)
-const ATTACK_RANGE: float = 70.0
-const STOP_DISTANCE: float = 65.0
+@export var GRAVITY = 980.0
+@export var SPAWN_POSITION = Vector2(172, 448)
+@export var ATTACK_RANGE: float = 70.0
+@export var STOP_DISTANCE: float = 65.0
 
-const LUNGE_DAMAGE: int = 18
-const LUNGE_COOLDOWN: float = 3.0
-const LUNGE_DURATION: float = 0.25
-const LUNGE_SPEED: float = 450.0
-const LUNGE_RANGE: float = 220.0
+@export var LUNGE_DAMAGE: int = 18
+@export var LUNGE_COOLDOWN: float = 3.0
+@export var LUNGE_DURATION: float = 0.25
+@export var LUNGE_SPEED: float = 450.0
+@export var LUNGE_RANGE: float = 220.0
 
 # These start at base values and are updated by GameManager on each respawn
-var max_health: int = 100
-var health: int = max_health
-var move_speed: int = 80
-var attack_damage: int = 10
-var attack_cooldown_duration: float = 1.5
+@export var max_health: int = 100
+@export var move_speed: int = 80
+@export var attack_damage: int = 10
+@export var attack_cooldown_duration: float = 1.5
 
+var health: int = max_health
 var is_dead: bool = false
 var is_attacking: bool = false
 var attack_cooldown: float = 0.0
