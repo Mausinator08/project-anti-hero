@@ -2,20 +2,20 @@ extends CharacterBody2D
 
 signal defeated
 
-const PROJECTILE_SCENE = preload("res://scenes/Projectile.tscn")
+@export var PROJECTILE_SCENE = preload("res://scenes/Projectile.tscn")
 
-const SPEED = 200.0
-const GRAVITY = 980.0
-const MAX_HEALTH: int = 300
+@export var SPEED = 200.0
+@export var GRAVITY = 980.0
+@export var MAX_HEALTH: int = 300
 
-const SWIPE_DAMAGE: int = 25
+@export var SWIPE_DAMAGE: int = 25
 
-const SLAM_DAMAGE: int = 50
-const SLAM_COOLDOWN: float = 2.0
-const SLAM_WINDUP: float = 0.35
-const SLAM_ACTIVE_TIME: float = 0.3
+@export var SLAM_DAMAGE: int = 50
+@export var SLAM_COOLDOWN: float = 2.0
+@export var SLAM_WINDUP: float = 0.35
+@export var SLAM_ACTIVE_TIME: float = 0.3
 
-const PROJECTILE_COOLDOWN: float = 1.0
+@export var PROJECTILE_COOLDOWN: float = 1.0
 
 var health: int = MAX_HEALTH
 var facing_direction: int = -1
